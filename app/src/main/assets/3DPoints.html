@@ -1,0 +1,117 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script src="file:///android_asset/js/three.js"></script>
+		<script src="file:///android_asset/js/OrbitControls.js"></script>
+		<script type="text/javascript">
+
+			alert("hello");
+
+			var planeWidth = 12;
+		
+			var renderer;
+			var cube;
+			var camera;
+
+			function init() {
+
+					renderer = new THREE.WebGLRenderer({
+							canvas: document.getElementById('mainCanvas')
+					});
+					renderer.setClearColor(0xeeeae5); // black
+					scene = new THREE.Scene();
+
+					camera = new THREE.OrthographicCamera(-5, 5, 3.75, -3.75, 0.1, 100);
+					camera.position.set(0, 0, 20);
+					camera.lookAt(new THREE.Vector3(0, 3, 0));
+					scene.add(camera);
+					
+					var xyPlane = new THREE.Mesh(new THREE.PlaneGeometry(planeWidth, planeWidth),
+									new THREE.MeshBasicMaterial({
+											color: 0xffffff,
+											side: THREE.DoubleSide
+									})
+					);
+					xyPlane.position.set(planeWidth / 2, planeWidth / 2, 0);
+					var yzPlane = new THREE.Mesh(new THREE.PlaneGeometry(planeWidth, planeWidth),
+									new THREE.MeshBasicMaterial({
+											color: 0xffee80,
+											side: THREE.DoubleSide
+									})
+					);
+					yzPlane.rotation.set(0, Math.PI / 2, 0);
+					yzPlane.position.set(0, planeWidth / 2, planeWidth / 2);
+					var xzPlane = new THREE.Mesh(new THREE.PlaneGeometry(planeWidth, planeWidth),
+									new THREE.MeshBasicMaterial({
+											color: 0xffffff,
+											side: THREE.DoubleSide
+									})
+					);
+					xzPlane.rotation.set(Math.PI / 2, 0, 0);
+					xzPlane.position.set(planeWidth / 2, 0, planeWidth / 2);
+					
+					scene.add(xyPlane);
+					scene.add(yzPlane);
+					scene.add(xzPlane);
+					
+					var lineGeometry = new THREE.Geometry();
+					
+					var number = 10;
+					for (var i=0; i<number; i++) {
+						for (var j=0; j<number; j++) {
+							for (var k=0; k<number; k++) {
+								lineGeometry.vertices.push(new THREE.Vector3( Math.random() * number, Math.random() * number, Math.random() * number ));
+							}
+						}
+					}
+					var line = new THREE.Line( lineGeometry, new THREE.LineBasicMaterial({color: 0x0000ff}) );
+					var points = new THREE.Points( lineGeometry, new THREE.PointsMaterial({color: 0xff0000, size: 1, sizeAttenuation: true}) );
+					scene.add(line);
+					scene.add(points);
+					
+
+					// a cube in the scene
+					cube = new THREE.Mesh(new THREE.CubeGeometry(1, 1, 1),
+									new THREE.MeshBasicMaterial({
+											color: 0x00ff00,
+											side: THREE.DoubleSide
+									})
+					);
+		//			scene.add(cube);
+
+					var light = new THREE.DirectionalLight(0xffffff);
+					light.position.set(10, 10, 15);
+					scene.add(light);
+
+					id = setInterval(draw, 20);
+					renderer.render(scene, camera);
+					
+					controls = new THREE.OrbitControls( camera );
+	//				controls.addEventListener( 'change', null );
+			}
+			
+			function draw() {
+	//				cube.rotation.y = (cube.rotation.y + 0.01) % (Math.PI * 2);
+					renderer.render(scene, camera);
+			}
+			
+			function stop() {
+					if (id !== null) {
+							clearInterval(id);
+							id = null;
+					}
+			}
+			
+			function updateControls() 
+			{
+					controls.update();
+					renderer.render(scene, camera);
+			}
+		</script>
+	</head>
+	<body onload="init()">
+    	<canvas id="mainCanvas" width="300px" height="500px" ></canvas>
+		<button id="stopBtn" onclick="stop()">Stop</button>
+	</body>
+</html>
